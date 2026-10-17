@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.1 (2026-10-17)
+
+Description and guides: why it exists. No change in behaviour.
+
+- The short description shown in *System > Extensions* (en-GB and it-IT) now says what the plugin
+  is for: archived articles in a category of their own, archiving moves, moving archives, 301
+  redirect when the address changes.
+- User guides (USAGE.md, USO.md) and README: new section explaining why the archive lives in a
+  category and not only in the Archived state, and that Archive Layouts for YOOtheme alone is
+  enough to design an archive page, even two distinct archives filtered by category.
+
 ## 1.0.0 (2026-10-17)
 
 First release. The archive automation of *Archive Layouts for YOOtheme* 1.2.1, now a separate

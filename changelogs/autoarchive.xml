@@ -5,6 +5,15 @@
         <element>autoarchive</element>
         <type>plugin</type>
         <folder>system</folder>
+        <version>1.0.1</version>
+        <change>
+            <item>Description and guides: why it exists. The description shown in System > Extensions (English and Italian) now explains what the plugin is for; the user guides and the README explain why archived articles live in a category of their own. No change in behaviour.</item>
+        </change>
+    </changelog>
+    <changelog>
+        <element>autoarchive</element>
+        <type>plugin</type>
+        <folder>system</folder>
         <version>1.0.0</version>
         <addition>
             <item>First release: the archive automation of Archive Layouts for YOOtheme 1.2.1 as a separate plugin that does not need YOOtheme. An archived article is moved to the archive category you choose; a published article saved or moved (also with Batch) into that category is archived through the Joomla article model; optional 301 redirect from the old address; Force archived is off by default.</item>

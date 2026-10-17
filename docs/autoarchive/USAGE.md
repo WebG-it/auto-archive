@@ -4,6 +4,27 @@ For **site managers**: install, set the archive category, update, uninstall. Eve
 Joomla interface. Italian version: [USO.md](./USO.md). Developers: [DEVELOPING.md](./DEVELOPING.md)
 (Italian) and [DEVELOPING.en.md](./DEVELOPING.en.md).
 
+## Why it exists
+
+For the people who run a site the Joomla **Archived** state is invisible, while a category
+called "Sold" or "Past events" can be seen, opened and filled. That is why almost everyone
+archives by moving the article into a folder, almost nobody uses the state, and the two gestures
+stay apart: dragging an article into "Sold" leaves it published, clicking **Archive** leaves it in
+its old category, and either way the article is only half done. Auto Archive makes the two
+gestures one and the same: moving into "Sold" means archiving, clicking **Archive** means ending
+up in "Sold", and whatever the editor does, the site stays consistent.
+
+The folder matters more than the state for three reasons. Everything on the site that works by
+category rather than by state (modules, filters, counters, searches, feeds, sitemaps) stops
+seeing an article only when its category changes. One archive category fed by many
+subcategories is simpler to manage than ten separate filters. And the only side effect of the
+move, the change of address, is repaired by the plugin itself with a **301 redirect**.
+
+To design the archived articles page with the YOOtheme Pro builder you do not need this plugin
+but [Archive Layouts for YOOtheme](../yooarchive/USAGE.md): even two distinct archives with two
+different layouts are just two *Archived Articles* menu items filtered by category, with nothing
+moved. Auto Archive is for those who want their archived articles in a folder of their own.
+
 ## What it does
 
 Joomla has an **Archived** state for articles, but an archived article stays in the category where

@@ -8,7 +8,7 @@
     <licence>GNU GPL version 2 or later (GPL-2.0-or-later); see LICENSE.txt</licence>
     <authorEmail>marco.galassi@webg.it</authorEmail>
     <authorUrl>https://www.webg.it</authorUrl>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <description>PLG_SYSTEM_AUTOARCHIVE_XML_DESCRIPTION</description>
     <namespace path="src">WebG\Plugin\System\Autoarchive</namespace>
     <scriptfile>script.php</scriptfile>

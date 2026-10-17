@@ -4,6 +4,27 @@ Per chi **gestisce il sito**: installare, scegliere la categoria archivio, aggio
 disinstallare. Tutto da interfaccia Joomla. English: [USAGE.md](./USAGE.md). Sviluppatore o AI?
 [DEVELOPING.md](./DEVELOPING.md).
 
+## Perché esiste
+
+Per chi gestisce un sito lo stato **Archiviato** di Joomla è invisibile, mentre una categoria
+"Venduti" o "Eventi passati" si vede, si apre, si riempie. Per questo quasi tutti archiviano
+spostando l'articolo in una cartella, e quasi nessuno usa lo stato, e i due gesti restano
+separati: chi trascina un articolo in "Venduti" lo lascia pubblicato, chi clicca **Archivia** lo
+lascia nella categoria di prima, e in tutti e due i casi l'articolo resta a metà. Auto Archive fa
+coincidere i due gesti: trascinare in "Venduti" vuol dire archiviare, cliccare **Archivia** vuol
+dire finire in "Venduti", e qualunque gesto faccia chi lavora sul sito, il sito resta coerente.
+
+La cartella conta più dello stato per tre motivi. Tutto quello che nel sito ragiona per
+categoria e non per stato (moduli, filtri, contatori, ricerche, feed, sitemap) smette di vedere
+un articolo solo quando cambia categoria. Un archivio unico che raccoglie articoli da molte
+sottocategorie è più semplice da gestire di dieci filtri separati. E l'unico effetto collaterale
+dello spostamento, il cambio di indirizzo, lo ripara il plugin stesso con il **redirect 301**.
+
+Per disegnare la pagina degli archiviati con il builder di YOOtheme Pro non serve questo plugin
+ma [Layout archivio per YOOtheme](../yooarchive/USO.md): anche due archivi distinti, con due
+layout diversi, si ottengono con due voci di menu *Articoli archiviati* filtrate per categoria,
+senza spostare nulla. Auto Archive è per chi vuole gli archiviati in una cartella propria.
+
 ## A cosa serve
 
 Joomla ha lo stato **Archiviato** per gli articoli, ma un articolo archiviato resta nella
