@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="system" method="upgrade">
+    <name>plg_system_autoarchive</name>
+    <author>Marco Galassi (WebG)</author>
+    <creationDate>2026-10</creationDate>
+    <copyright>(C) 2026 Marco Galassi / WebG</copyright>
+    <license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+    <licence>GNU GPL version 2 or later (GPL-2.0-or-later); see LICENSE.txt</licence>
+    <authorEmail>marco.galassi@webg.it</authorEmail>
+    <authorUrl>https://www.webg.it</authorUrl>
+    <version>1.0.0</version>
+    <description>PLG_SYSTEM_AUTOARCHIVE_XML_DESCRIPTION</description>
+    <namespace path="src">WebG\Plugin\System\Autoarchive</namespace>
+    <scriptfile>script.php</scriptfile>
+    <changelogurl>https://raw.githubusercontent.com/WebG-it/joomla-extensions/main/changelogs/autoarchive.xml</changelogurl>
+
+    <files>
+        <folder plugin="autoarchive">services</folder>
+        <folder>src</folder>
+        <folder>language</folder>
+        <filename>LICENSE.txt</filename>
+    </files>
+
+    <config>
+        <fields name="params">
+            <fieldset name="basic">
+                <field
+                    name="automation_note"
+                    type="note"
+                    class="alert alert-warning"
+                    description="PLG_SYSTEM_AUTOARCHIVE_NOTE_AUTOMATION_DESC"
+                />
+                <field
+                    name="automation"
+                    type="radio"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_AUTOMATION_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_AUTOMATION_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="0"
+                    filter="integer"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="target_catid"
+                    type="category"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_TARGET_CATID_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_TARGET_CATID_DESC"
+                    extension="com_content"
+                    published="0,1,2"
+                    filter="integer"
+                    showon="automation:1"
+                >
+                    <option value="0">JSELECT</option>
+                </field>
+                <field
+                    name="require_create"
+                    type="radio"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_REQUIRE_CREATE_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_REQUIRE_CREATE_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                    filter="integer"
+                    showon="automation:1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="move_on_archive"
+                    type="radio"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_MOVE_ON_ARCHIVE_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_MOVE_ON_ARCHIVE_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                    filter="integer"
+                    showon="automation:1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="redirect_on_move"
+                    type="radio"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_REDIRECT_ON_MOVE_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_REDIRECT_ON_MOVE_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                    filter="integer"
+                    showon="automation:1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="archive_on_move"
+                    type="radio"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_ARCHIVE_ON_MOVE_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_ARCHIVE_ON_MOVE_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="1"
+                    filter="integer"
+                    showon="automation:1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+                <field
+                    name="force_archived"
+                    type="radio"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_FORCE_ARCHIVED_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_FORCE_ARCHIVED_DESC"
+                    layout="joomla.form.field.radio.switcher"
+                    default="0"
+                    filter="integer"
+                    showon="automation:1[AND]archive_on_move:1"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
+                </field>
+            </fieldset>
+        </fields>
+    </config>
+
+    <updateservers>
+        <server type="collection" name="WebG Joomla Extensions">https://raw.githubusercontent.com/WebG-it/joomla-extensions/main/collection.xml</server>
+    </updateservers>
+</extension>
