@@ -11,7 +11,7 @@ Keeps the archived articles of a Joomla site **in one category**, with or withou
 It is the automation of *Archive Layouts for YOOtheme* 1.2.1, now a separate plugin with the same
 behaviour. **Coming from Archive Layouts 1.x**: installing Auto Archive imports the automation
 settings and switches the old automation off. Archive Layouts 2.0.0 refuses to update while the
-automation is on and Auto Archive is not installed and enabled.
+automation is on and Auto Archive is not installed, enabled and switched on.
 
 Requirements: Joomla 5 or 6, PHP 8.1+. Install: *System > Install > Extensions > Upload Package File*
 with `plg_system_autoarchive-1.0.0.zip`; updates arrive from the WebG update server.

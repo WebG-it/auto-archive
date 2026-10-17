@@ -16,7 +16,7 @@
         <downloads>
             <downloadurl type="full" format="zip">https://raw.githubusercontent.com/WebG-it/joomla-extensions/main/dist/plg_system_autoarchive-1.0.0.zip</downloadurl>
         </downloads>
-        <sha256>2bafa09c7a5c13120a9173e41032df0e2531c90ddaa071c47067f682a969ed52</sha256>
+        <sha256>c2d64b109b46bb145f681e50da87c04eac61d16e60b4cf22ccac3722c4165519</sha256>
         <tags>
             <tag>stable</tag>
         </tags>

@@ -155,7 +155,7 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
             if (!$configured && (int) ($import['target_catid'] ?? 0) > 0) {
                 $app->enqueueMessage(Text::sprintf('PLG_SYSTEM_AUTOARCHIVE_IMPORTED', (int) $import['target_catid']), 'warning');
             } elseif (!$configured) {
-                $app->enqueueMessage(Text::_('PLG_SYSTEM_AUTOARCHIVE_IMPORTED_OFF'), 'notice');
+                $app->enqueueMessage(Text::_('PLG_SYSTEM_AUTOARCHIVE_IMPORTED_NOCAT'), 'warning');
             }
 
             return;

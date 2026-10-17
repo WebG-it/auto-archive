@@ -24,7 +24,7 @@ the category, Force archived (off by default).
 
 The automation used to be part of *Archive Layouts for YOOtheme* (up to 1.2.x). On install, Auto
 Archive imports those settings and switches the old automation off. Archive Layouts 2.0 refuses to
-update while the automation is on and Auto Archive is not installed and enabled, so nothing is lost.
+update while the automation is on and Auto Archive is not installed, enabled and switched on, so nothing is lost.
 
 ## Uninstall
 
