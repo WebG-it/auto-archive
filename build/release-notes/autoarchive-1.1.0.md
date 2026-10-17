@@ -4,7 +4,7 @@ The 301 redirect of a moved article can now live in **4SEO**.
 
 **New**
 - Option *Store the redirects in*: *Automatic* (default) uses a 4SEO redirect rule when 4SEO is installed, enabled and its redirects are on, and the Joomla *Redirects* component otherwise (as in 1.0); or force *Joomla Redirects* / *4SEO redirect rules*.
-- No double jumps: a 4SEO rule that already points to the old address is pointed to the new one; a rule of this plugin that starts from the new address (a live page again) is switched off; a rule for the old address that the plugin did not create is never changed.
+- No double jumps: the plugin never touches a rule made by hand for the same old address; but a rule that already pointed to the old address (an earlier move, or one made by hand) is pointed to the new address, with a note added to it saying what changed. A rule of this plugin that starts from the new address (a live page again) is switched off.
 
 **Changed**
 - The update server is in this repository. Works on Joomla 5.0 and 5.1 too.
