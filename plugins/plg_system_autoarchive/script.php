@@ -110,7 +110,7 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
             return;
         }
 
-        $oldParams = new Registry($old->params ?: '{}');
+        $oldParams = $this->registry($old->params);
         $import    = [];
 
         foreach (self::IMPORT_KEYS as $key) {
@@ -129,8 +129,8 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
             return;
         }
 
-        $newParams  = new Registry($new->params ?: '{}');
-        $oldVersion = (string) (new Registry($old->manifest_cache ?: '{}'))->get('version', '');
+        $newParams  = $this->registry($new->params);
+        $oldVersion = (string) $this->registry($old->manifest_cache)->get('version', '');
         $isLegacy   = $oldVersion !== '' && version_compare($oldVersion, '2.0.0', '<');
         $app        = Factory::getApplication();
 
@@ -152,8 +152,10 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
                 $this->saveParams($db, (int) $old->extension_id, $oldParams);
             }
 
-            if (!$configured) {
+            if (!$configured && (int) ($import['target_catid'] ?? 0) > 0) {
                 $app->enqueueMessage(Text::sprintf('PLG_SYSTEM_AUTOARCHIVE_IMPORTED', (int) $import['target_catid']), 'warning');
+            } elseif (!$configured) {
+                $app->enqueueMessage(Text::_('PLG_SYSTEM_AUTOARCHIVE_IMPORTED_OFF'), 'notice');
             }
 
             return;
@@ -161,6 +163,22 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
 
         if (!$configured) {
             $app->enqueueMessage(Text::_('PLG_SYSTEM_AUTOARCHIVE_IMPORTED_OFF'), 'notice');
+        }
+    }
+
+    /**
+     * @param   string|null  $json  Stored JSON.
+     *
+     * @return  Registry  Empty when the JSON is not valid.
+     *
+     * @since   1.0.0
+     */
+    private function registry(?string $json): Registry
+    {
+        try {
+            return new Registry($json ?: '{}');
+        } catch (\Throwable $e) {
+            return new Registry();
         }
     }
 
