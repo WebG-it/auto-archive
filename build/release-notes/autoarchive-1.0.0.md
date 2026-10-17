@@ -22,6 +22,6 @@ install with and without Archive Layouts, with and without YOOtheme Pro, and wit
 YOOtheme Pro 3.0.15 and 4SEO 7.2.0 active. JED Checker `master` and `develop`: no errors, no
 warnings, one notice about the `<licence>` element.
 
-Docs: [user guide](https://github.com/WebG-it/joomla-extensions/blob/main/docs/autoarchive/USAGE.md) ·
-[guida in italiano](https://github.com/WebG-it/joomla-extensions/blob/main/docs/autoarchive/USO.md) ·
-[changelog](https://github.com/WebG-it/joomla-extensions/blob/main/plugins/plg_system_autoarchive/CHANGELOG.md)
+Docs: [user guide](https://github.com/WebG-it/auto-archive/blob/main/docs/autoarchive/USAGE.md) ·
+[guida in italiano](https://github.com/WebG-it/auto-archive/blob/main/docs/autoarchive/USO.md) ·
+[changelog](https://github.com/WebG-it/auto-archive/blob/main/plugins/plg_system_autoarchive/CHANGELOG.md)

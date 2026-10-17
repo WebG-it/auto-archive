@@ -21,7 +21,7 @@ sottocategorie è più semplice da gestire di dieci filtri separati. E l'unico e
 dello spostamento, il cambio di indirizzo, lo ripara il plugin stesso con il **redirect 301**.
 
 Per disegnare la pagina degli archiviati con il builder di YOOtheme Pro non serve questo plugin
-ma [Layout archivio per YOOtheme](../yooarchive/USO.md): anche due archivi distinti, con due
+ma [Layout archivio per YOOtheme](https://github.com/WebG-it/archive-layouts/blob/main/docs/yooarchive/USO.md): anche due archivi distinti, con due
 layout diversi, si ottengono con due voci di menu *Articoli archiviati* filtrate per categoria,
 senza spostare nulla. Auto Archive è per chi vuole gli archiviati in una cartella propria.
 
@@ -40,7 +40,7 @@ scegli tu:
   fa parte dell'URL.
 
 È Joomla puro: funziona con o senza YOOtheme. Spento di serie. (Per disegnare la pagina Articoli
-archiviati col builder di YOOtheme Pro vedi [Layout archivio per YOOtheme](../yooarchive/USO.md),
+archiviati col builder di YOOtheme Pro vedi [Layout archivio per YOOtheme](https://github.com/WebG-it/archive-layouts/blob/main/docs/yooarchive/USO.md),
 un plugin separato.)
 
 Requisiti: Joomla 5 o 6, PHP 8.1+.

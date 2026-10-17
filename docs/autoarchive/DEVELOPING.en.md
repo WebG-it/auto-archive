@@ -1,5 +1,7 @@
 # Auto Archive: developer guide
 
+> **Tools.** The Docker test environment (`dev/...`), the build script (`build/build_plugin.py`) and the JED Checker helpers are not in this repository: they live in [joomla-dev-tools](https://github.com/WebG-it/joomla-dev-tools). Paths such as `dev/` and `build/` below refer to that repository (clone it next to this one). The update server of this plugin is `collection.xml` (it points to `updates/autoarchive.xml`) in this repository.
+
 English summary of [DEVELOPING.md](./DEVELOPING.md) (Italian, more detailed).
 
 > Public repository: never commit tokens, passwords, keys, server hosts or customer data.
@@ -54,7 +56,7 @@ without the marker is left alone (log line only). The log is rotated above 1 MB 
 ## Test environment and release
 
 Same Docker environment as Archive Layouts (`dev/yooarchive/`, see
-[its guide](../yooarchive/DEVELOPING.en.md#test-environment-docker)). Auto Archive does not need
+[its guide](https://github.com/WebG-it/archive-layouts/blob/main/docs/yooarchive/DEVELOPING.en.md#test-environment-docker)). Auto Archive does not need
 YOOtheme but the environment is used to test the migration from 1.x. Dev scripts:
 `automation_on.php <alias> [yooarchive|autoarchive]`, `api_state.php`, `mk_published.php`,
 `batch_ui.php` (Batch as the browser does it), `security_test.php`, `set_debug.php`.

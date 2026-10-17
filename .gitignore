@@ -1,0 +1,7 @@
+# Local build output (release zips go to dist/ only when published)
+build/out/
+__pycache__/
+# Never commit local environment files or secrets
+.env
+*.env
+!*.env.example

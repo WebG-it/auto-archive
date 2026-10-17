@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Update server of Auto Archive: a collection with a single row. Joomla keeps the TYPE of the update site a site
+  already had, so sites that came from the old shared WebG collection stay 'collection': this file is a
+  collection too. The row says which version is current; the details (download, sha256) are in updates/autoarchive.xml.
+  At every release change version here and in updates/ (and never reuse a version number).
+  PUBLIC repository: never put tokens, passwords or keys in it.
+-->
+<extensionset name="Auto Archive" description="Plugin Joomla sviluppato da WebG">
+    <extension
+        name="Auto Archive"
+        element="autoarchive"
+        type="plugin"
+        folder="system"
+        version="1.0.1"
+        detailsurl="https://raw.githubusercontent.com/WebG-it/auto-archive/main/updates/autoarchive.xml" />
+</extensionset>

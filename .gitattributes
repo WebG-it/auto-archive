@@ -1,0 +1,5 @@
+# Plugin sources and scripts always with LF, so the zip is byte-identical on every OS.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.zip binary

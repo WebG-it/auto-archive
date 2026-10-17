@@ -21,7 +21,7 @@ subcategories is simpler to manage than ten separate filters. And the only side 
 move, the change of address, is repaired by the plugin itself with a **301 redirect**.
 
 To design the archived articles page with the YOOtheme Pro builder you do not need this plugin
-but [Archive Layouts for YOOtheme](../yooarchive/USAGE.md): even two distinct archives with two
+but [Archive Layouts for YOOtheme](https://github.com/WebG-it/archive-layouts/blob/main/docs/yooarchive/USAGE.md): even two distinct archives with two
 different layouts are just two *Archived Articles* menu items filtered by category, with nothing
 moved. Auto Archive is for those who want their archived articles in a folder of their own.
 
@@ -40,14 +40,14 @@ it was. Auto Archive keeps the archived articles of your site **in one category*
 
 It is plain Joomla: it works with or without YOOtheme. It is off by default. (To design the
 Archived Articles page with the YOOtheme Pro builder see
-[Archive Layouts for YOOtheme](../yooarchive/USAGE.md), a separate plugin.)
+[Archive Layouts for YOOtheme](https://github.com/WebG-it/archive-layouts/blob/main/docs/yooarchive/USAGE.md), a separate plugin.)
 
 Requirements: Joomla 5 or 6, PHP 8.1+.
 
 ## 1. Install
 
 1. Download `plg_system_autoarchive-X.Y.Z.zip` from the
-   [releases](https://github.com/WebG-it/joomla-extensions/releases) or from `dist/`.
+   [releases](https://github.com/WebG-it/auto-archive/releases) or from `dist/`.
 2. *System > Install > Extensions > Upload Package File*.
 3. The plugin is enabled automatically. Nothing happens until you switch on the automation and
    choose the category.
@@ -125,5 +125,5 @@ left. The redirects stored by the plugin stay in *System > Redirects* (their not
 
 ## Support
 
-Questions and bug reports: [GitHub issues](https://github.com/WebG-it/joomla-extensions/issues)
+Questions and bug reports: [GitHub issues](https://github.com/WebG-it/auto-archive/issues)
 (please write the Joomla and PHP versions). Never post passwords, keys or private data in an issue.

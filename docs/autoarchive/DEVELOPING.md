@@ -1,5 +1,7 @@
 # Guida sviluppatore: plg_system_autoarchive (Auto Archive)
 
+> **Strumenti.** L'ambiente Docker di prova (`dev/...`), lo script di build (`build/build_plugin.py`) e gli helper del JED Checker non stanno in questo repository: sono in [joomla-dev-tools](https://github.com/WebG-it/joomla-dev-tools). I percorsi `dev/` e `build/` qui sotto si riferiscono a quel repository (clonalo accanto a questo). L'update server di questo plugin e' `collection.xml` (rimanda a `updates/autoarchive.xml`) in questo repository.
+
 Per **sviluppatore o AI** che deve modificare, collaudare o rilasciare il plugin.
 
 > Repo **PUBBLICO**: mai token, password, chiavi, host, percorsi di server o dati di clienti.
@@ -69,7 +71,7 @@ Auto Archive non c'e' o e' spento. I redirect gia' salvati dalla 1.2.x (nota
 
 ## 2. Ambiente di prova e rilascio
 
-Come per Layout archivio: Docker in `dev/yooarchive/` (vedi [la guida](../yooarchive/DEVELOPING.md#2-ambiente-di-prova-docker)).
+Come per Layout archivio: Docker in `dev/yooarchive/` (vedi [la guida](https://github.com/WebG-it/archive-layouts/blob/main/docs/yooarchive/DEVELOPING.md#2-ambiente-di-prova-docker)).
 Auto Archive non ha bisogno di YOOtheme, ma lo stesso ambiente serve per provare la migrazione dalla
 1.x. Script utili: `scripts/automation_on.php <alias> [yooarchive|autoarchive]` (accende
 l'automazione), `scripts/api_state.php` (stato o categoria via API), `scripts/mk_published.php`
