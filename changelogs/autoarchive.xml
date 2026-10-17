@@ -5,6 +5,20 @@
         <element>autoarchive</element>
         <type>plugin</type>
         <folder>system</folder>
+        <version>1.1.0</version>
+        <addition>
+            <item>Redirects can now be stored as 4SEO redirect rules. New option "Store the redirects in": Automatic (default) uses 4SEO when it is installed, enabled and its redirects are on, otherwise the Joomla Redirects component as before; or force one of the two.</item>
+            <item>No double jumps in 4SEO: a redirect rule that already points to the old address of a moved article (an earlier move, or one made by hand) is pointed to the new address; a rule of this plugin that starts from the new address, now a live page again, is switched off; a rule for the old address that the plugin did not create is never changed.</item>
+        </addition>
+        <change>
+            <item>The update server now lives in the repository of the plugin (github.com/WebG-it/auto-archive). Nothing else changes for people who do not use 4SEO.</item>
+            <item>Works on Joomla 5.0 and 5.1 too (the queries no longer need the createQuery method of Joomla 5.2).</item>
+        </change>
+    </changelog>
+    <changelog>
+        <element>autoarchive</element>
+        <type>plugin</type>
+        <folder>system</folder>
         <version>1.0.1</version>
         <change>
             <item>Description and guides: why it exists. The description shown in System > Extensions (English and Italian) now explains what the plugin is for; the user guides and the README explain why archived articles live in a category of their own. No change in behaviour.</item>

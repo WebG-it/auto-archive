@@ -64,7 +64,8 @@ Coming from Archive Layouts for YOOtheme 1.x? See [Moving from Archive Layouts 1
 | Archive category | Where archived articles go. Without a category, or if the category is deleted or trashed, the automation pauses and administrators see a warning. It must be **published**: otherwise moved articles do not appear on the public site and administrators see a yellow warning. |
 | Require create permission | On by default: move only if the user who archives can also create articles in the archive category. |
 | Move archived articles | Archive (list, toolbar, edit form or API) = move to the category. |
-| 301 redirect from the old address | On by default. When the category is part of the article URL, entering the archive category changes the address: the old one is redirected (301) to the new one through the Joomla *Redirects* component, for the moves made by the plugin and for the articles a user moves into the category. Needs the core *System - Redirect* plugin on (administrators see a warning if it is off). Nothing is stored when the address does not change. |
+| 301 redirect from the old address | On by default. When the category is part of the article URL, entering the archive category changes the address: the old one is redirected (301) to the new one for the moves made by the plugin and for the articles a user moves into the category. Where it is kept is chosen by the next option. With Joomla *Redirects* it needs the core *System - Redirect* plugin on (administrators see a warning if it is off). Nothing is stored when the address does not change. |
+| Store the redirects in | *Automatic* (default): in 4SEO as a redirect rule when 4SEO is installed, enabled and its redirects are on, otherwise in the Joomla *Redirects* component. *Joomla Redirects* or *4SEO redirect rules* force one of the two (4SEO chosen but not usable: Joomla is used and the reason is written to the log). Since 1.1.0. |
 | Archive articles moved into the category | A published article saved or moved (also with *Batch*) into the category is archived. |
 | Force archived | Off by default: an article already in the category can be republished on purpose. On: it is archived again every time. |
 
@@ -106,12 +107,21 @@ plugin it is no longer there: it is this plugin.
 
 ## Notes for 4SEO users
 
-4SEO does not create a redirect when an article changes URL: keep the option *301 redirect from the
-old address* on (with the core *System - Redirect* plugin on) if the category is part of your
-article URLs. After archiving many articles at once run a new site analysis in 4SEO (*Pages >
-Reset analysis*) so that sitemap and canonical tags use the new addresses. With article URLs that
-contain the id (`/<id>-alias`) Joomla finds the article by id whatever the category in the address,
-so the old URL stays live after the move (no 404) and the redirect is not used.
+From 1.1.0, when 4SEO is installed and its redirects are on, the 301 redirect of a move is stored as a
+**4SEO redirect rule** (*Redirects > Rules*, note starting with "Auto Archive:") and served by 4SEO; the
+core *System - Redirect* plugin is not needed for it. Details:
+
+- If a redirect rule already points to the old address (an earlier move, or one made by hand), it is
+  pointed to the new address, so visitors never go through two redirects. The rule made by hand keeps its
+  type and gets a note saying what changed.
+- A rule of this plugin that starts from the address the article has now (a live page again) is switched off.
+- A rule for the old address that the plugin did not create is never changed.
+- An address that 4SEO cannot hold as a plain rule (it contains the characters `{*}` or `{?}`) goes to Joomla Redirects.
+
+After archiving many articles at once run a new site analysis in 4SEO (*Pages > Reset analysis*) so that
+sitemap and canonical tags use the new addresses. With article URLs that contain the id (`/<id>-alias`)
+Joomla finds the article by id whatever the category in the address, so the old URL stays live after the
+move (no 404) and the redirect is not used.
 
 ## 3. Update
 

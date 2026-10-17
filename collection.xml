@@ -12,6 +12,6 @@
         element="autoarchive"
         type="plugin"
         folder="system"
-        version="1.0.1"
+        version="1.1.0"
         detailsurl="https://raw.githubusercontent.com/WebG-it/auto-archive/main/updates/autoarchive.xml" />
 </extensionset>

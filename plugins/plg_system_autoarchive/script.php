@@ -77,7 +77,7 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
         $db = Factory::getContainer()->get(DatabaseInterface::class);
 
         // Switched on at the first install; the automation itself stays off until it is configured.
-        $query = $db->createQuery()
+        $query = (method_exists($db, 'createQuery') ? $db->createQuery() : $db->getQuery(true))
             ->update($db->quoteName('#__extensions'))
             ->set($db->quoteName('enabled') . ' = 1')
             ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
@@ -192,7 +192,7 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
      */
     private function getExtension(DatabaseInterface $db, string $element): ?object
     {
-        $query = $db->createQuery()
+        $query = (method_exists($db, 'createQuery') ? $db->createQuery() : $db->getQuery(true))
             ->select($db->quoteName(['extension_id', 'params', 'manifest_cache']))
             ->from($db->quoteName('#__extensions'))
             ->where($db->quoteName('type') . ' = ' . $db->quote('plugin'))
@@ -215,7 +215,7 @@ class PlgSystemAutoarchiveInstallerScript extends InstallerScript
     private function saveParams(DatabaseInterface $db, int $id, Registry $params): void
     {
         $json  = $params->toString();
-        $query = $db->createQuery()
+        $query = (method_exists($db, 'createQuery') ? $db->createQuery() : $db->getQuery(true))
             ->update($db->quoteName('#__extensions'))
             ->set($db->quoteName('params') . ' = :params')
             ->where($db->quoteName('extension_id') . ' = :id')

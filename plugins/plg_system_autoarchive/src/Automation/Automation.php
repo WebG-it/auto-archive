@@ -20,6 +20,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Table\Content as ContentTable;
 use Joomla\CMS\Table\Table;
+use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Content\Site\Helper\RouteHelper;
 use Joomla\Database\DatabaseInterface;
 use Joomla\Database\ParameterType;
@@ -125,6 +126,22 @@ final class Automation
     private array $oldUrls = [];
 
     /**
+     * Where the redirects of this request are stored ('joomla' or 'forseo'), decided on first use.
+     *
+     * @var    string|null
+     * @since  1.1.0
+     */
+    private ?string $backend = null;
+
+    /**
+     * Redirects stored in this request, by store, for the message to the administrator.
+     *
+     * @var    array<string, int>
+     * @since  1.1.0
+     */
+    private array $redirectCounts = ['joomla' => 0, 'forseo' => 0];
+
+    /**
      * @param   Registry                 $params  The plugin parameters.
      * @param   CMSApplicationInterface  $app     The application.
      *
@@ -187,7 +204,7 @@ final class Automation
 
         $id    = (int) $table->id;
         $db    = Factory::getContainer()->get(DatabaseInterface::class);
-        $query = $db->createQuery()
+        $query = self::query($db)
             ->select([$db->quoteName('catid'), $db->quoteName('state'), $db->quoteName('language')])
             ->from($db->quoteName('#__content'))
             ->where($db->quoteName('id') . ' = :id')
@@ -375,9 +392,7 @@ final class Automation
                 }
             }
 
-            if ($redirects) {
-                $this->notice(Text::plural('PLG_SYSTEM_AUTOARCHIVE_MSG_REDIRECTS_N', $redirects));
-            }
+            $this->reportRedirects();
         } catch (\Throwable $e) {
             $this->warn('PLG_SYSTEM_AUTOARCHIVE_MSG_ARCHIVE_FAILED', 'Archive failed for articles ' . implode(',', $pks) . ': ' . $e->getMessage());
         } finally {
@@ -473,9 +488,7 @@ final class Automation
                 Log::add('Moved articles ' . implode(',', $moved) . ' to category ' . $target, Log::INFO, 'autoarchive');
             }
 
-            if ($redirects) {
-                $this->notice(Text::plural('PLG_SYSTEM_AUTOARCHIVE_MSG_REDIRECTS_N', $redirects));
-            }
+            $this->reportRedirects();
 
             if ($skipped) {
                 $detail = [];
@@ -521,10 +534,106 @@ final class Automation
     }
 
     /**
-     * Stores a 301 redirect from the old to the new URL of a moved article in the Joomla
-     * Redirect component (used by the "System - Redirect" plugin on 404 pages). An
-     * existing redirect for the same old URL is updated; a redirect that starts from the
-     * new URL, now a live page again, is unpublished.
+     * A new query object, on Joomla 5.0 and 5.1 (no createQuery yet) as on 5.2 and later.
+     *
+     * @param   DatabaseInterface  $db  The database.
+     *
+     * @return  \Joomla\Database\QueryInterface
+     *
+     * @since   1.1.0
+     */
+    private static function query(DatabaseInterface $db)
+    {
+        return method_exists($db, 'createQuery') ? $db->createQuery() : $db->getQuery(true);
+    }
+
+    /**
+     * Which redirect store is used for the moves: the Joomla Redirects component (as in 1.0)
+     * or the redirect rules of 4SEO. Chosen by the option "Store the redirects in": Automatic
+     * uses 4SEO when it is installed, enabled and its redirects are on, Joomla otherwise.
+     * Decided once per request.
+     *
+     * @return  string  'joomla' or 'forseo'
+     *
+     * @since   1.1.0
+     */
+    private function redirectBackend(): string
+    {
+        if ($this->backend === null) {
+            $this->backend = self::resolveRedirectBackend($this->params);
+
+            if ($this->backend === 'joomla' && (string) $this->params->get('redirect_target', 'auto') === 'forseo') {
+                Log::add('Redirect store set to 4SEO but 4SEO is not installed, enabled or has its redirects off: using Joomla Redirects', Log::WARNING, 'autoarchive');
+            }
+        }
+
+        return $this->backend;
+    }
+
+    /**
+     * The redirect store for the given plugin parameters (see redirectBackend()).
+     *
+     * @param   Registry  $params  The plugin parameters.
+     *
+     * @return  string  'joomla' or 'forseo'
+     *
+     * @since   1.1.0
+     */
+    public static function resolveRedirectBackend(Registry $params): string
+    {
+        $choice = (string) $params->get('redirect_target', 'auto');
+
+        if ($choice === 'joomla') {
+            return 'joomla';
+        }
+
+        if (self::forseoRedirectsAvailable()) {
+            return 'forseo';
+        }
+
+        return 'joomla';
+    }
+
+    /**
+     * Whether 4SEO can serve the redirects: system plugin enabled, rules table present and the
+     * redirects feature of 4SEO not switched off in its configuration.
+     *
+     * @return  bool
+     *
+     * @since   1.1.0
+     */
+    public static function forseoRedirectsAvailable(): bool
+    {
+        try {
+            if (!PluginHelper::isEnabled('system', 'forseo')) {
+                return false;
+            }
+
+            $db = Factory::getContainer()->get(DatabaseInterface::class);
+
+            if (!\in_array(strtolower($db->getPrefix() . 'forseo_rules'), array_map('strtolower', $db->getTableList()), true)) {
+                return false;
+            }
+
+            $query = self::query($db)
+                ->select($db->quoteName('value'))
+                ->from($db->quoteName('#__forseo_config'))
+                ->where($db->quoteName('scope') . ' = ' . $db->quote('redirects'))
+                ->where($db->quoteName('key') . ' = ' . $db->quote('enabled'));
+            $value = $db->setQuery($query)->loadResult();
+
+            // No stored value means the 4SEO default, which is on.
+            return $value === null || !\in_array(strtolower(trim((string) $value)), ['', '0', 'false', 'no', 'off', 'null'], true);
+        } catch (\Throwable $e) {
+            Log::add('4SEO not usable for redirects: ' . $e->getMessage(), Log::INFO, 'autoarchive');
+
+            return false;
+        }
+    }
+
+    /**
+     * Stores a 301 redirect from the old to the new URL of a moved article, in 4SEO or in
+     * the Joomla Redirects component (see redirectBackend()).
      *
      * @param   int     $id      The article id.
      * @param   string  $oldUrl  The URL before the move.
@@ -540,11 +649,330 @@ final class Automation
             return false;
         }
 
+        if ($this->redirectBackend() === 'forseo') {
+            $done = $this->addForseoRedirect($id, $oldUrl, $newUrl);
+
+            if ($done !== null) {
+                if ($done) {
+                    $this->redirectCounts['forseo']++;
+                }
+
+                return $done;
+            }
+
+            // An address 4SEO cannot hold as a plain rule: Joomla Redirects takes it.
+        }
+
+        $done = $this->addJoomlaRedirect($id, $oldUrl, $newUrl);
+
+        if ($done) {
+            $this->redirectCounts['joomla']++;
+        }
+
+        return $done;
+    }
+
+    /**
+     * Tells the administrator how many redirects were stored, and where.
+     *
+     * @return  void
+     *
+     * @since   1.1.0
+     */
+    private function reportRedirects(): void
+    {
+        if ($this->redirectCounts['joomla']) {
+            $this->notice(Text::plural('PLG_SYSTEM_AUTOARCHIVE_MSG_REDIRECTS_N', $this->redirectCounts['joomla']));
+        }
+
+        if ($this->redirectCounts['forseo']) {
+            $this->notice(Text::plural('PLG_SYSTEM_AUTOARCHIVE_MSG_REDIRECTS_FORSEO_N', $this->redirectCounts['forseo']));
+        }
+
+        $this->redirectCounts = ['joomla' => 0, 'forseo' => 0];
+    }
+
+    /**
+     * Root relative path that a 4SEO rule can hold for a URL, or null when the URL contains
+     * what 4SEO reads as a wildcard or a regular expression.
+     *
+     * @param   string  $url  The public URL (path, as built by the router).
+     *
+     * @return  string|null
+     *
+     * @since   1.1.0
+     */
+    private function forseoPath(string $url): ?string
+    {
+        $path = (string) parse_url($url, PHP_URL_PATH);
+        $base = Uri::root(true);
+
+        if ($base !== '' && str_starts_with($path, $base . '/')) {
+            $path = substr($path, \strlen($base));
+        }
+
+        if ($path === '' || $path[0] !== '/' || str_contains($path, '{*}') || str_contains($path, '{?}') || str_contains($path, '{$')) {
+            return null;
+        }
+
+        return $path;
+    }
+
+    /**
+     * Whether a 4SEO rule specification is a plain address equal to the given path (case and
+     * encoding as 4SEO compares them). Wildcard and regular expression specifications never match.
+     *
+     * @param   string  $spec  The URL specification or target of a rule.
+     * @param   string  $path  The root relative path.
+     *
+     * @return  bool
+     *
+     * @since   1.1.0
+     */
+    private function samePath(string $spec, string $path): bool
+    {
+        $spec = trim($spec);
+
+        if ($spec === '' || $spec[0] === '~' || str_contains($spec, '{') || str_contains($spec, "\n")) {
+            return false;
+        }
+
+        $spec = (string) parse_url($spec, PHP_URL_PATH);
+
+        $left  = mb_strtolower($this->decodePath($spec));
+        $right = mb_strtolower($this->decodePath($path));
+
+        return $left === $right;
+    }
+
+    /**
+     * A path with its percent encoding resolved, for comparisons.
+     *
+     * @param   string  $path  The path.
+     *
+     * @return  string
+     *
+     * @since   1.1.0
+     */
+    private function decodePath(string $path): string
+    {
+        return rawurldecode($path);
+    }
+
+    /**
+     * Stores the 301 redirect as a redirect rule of 4SEO (table #__forseo_rules, type 10,
+     * the specification in the JSON column "rule"):
+     *
+     * - a rule that already points to the old address (a previous move, or one made by hand)
+     *   is pointed to the new address, so visitors never go through two redirects;
+     * - a rule of this plugin that starts from the new address, now a live page again, is
+     *   switched off;
+     * - a rule for the old address that this plugin did not create is never changed.
+     *
+     * @param   int     $id      The article id.
+     * @param   string  $oldUrl  The URL before the move.
+     * @param   string  $newUrl  The URL after the move.
+     *
+     * @return  bool|null  True when a rule has been stored, false when nothing was stored,
+     *                     null when 4SEO cannot hold this address (Joomla Redirects is used).
+     *
+     * @since   1.1.0
+     */
+    private function addForseoRedirect(int $id, string $oldUrl, string $newUrl): ?bool
+    {
+        $old = $this->forseoPath($oldUrl);
+        $new = $this->forseoPath($newUrl);
+
+        if ($old === null || $new === null) {
+            return null;
+        }
+
+        if (mb_strtolower($old) === mb_strtolower($new)) {
+            return false;
+        }
+
+        try {
+            $db      = Factory::getContainer()->get(DatabaseInterface::class);
+            $now     = Factory::getDate()->toSql();
+            $note    = self::REDIRECT_MARKER . ' article ' . $id . ' moved to the archive category';
+            $rows    = $db->setQuery(
+                self::query($db)
+                    ->select($db->quoteName(['id', 'enabled', 'rule']))
+                    ->from($db->quoteName('#__forseo_rules'))
+                    ->where($db->quoteName('type') . ' = 10')
+            )->loadObjectList();
+            $ownRule = null;
+            $stored  = false;
+
+            foreach ($rows as $row) {
+                $spec = json_decode((string) $row->rule, true);
+
+                if (!\is_array($spec)) {
+                    continue;
+                }
+
+                $own = $this->isOwnRedirect((string) ($spec['notes'] ?? ''));
+
+                // The new address is a live page again: an own rule that starts from it goes off.
+                if ($own && (int) $row->enabled !== 0 && $this->samePath((string) ($spec['urlSpec'] ?? ''), $new)) {
+                    $spec['enabled'] = 0;
+                    $this->saveForseoRule((int) $row->id, $spec, 0);
+                    continue;
+                }
+
+                // The rule for the old address itself.
+                if ($this->samePath((string) ($spec['urlSpec'] ?? ''), $old)) {
+                    if ($own) {
+                        $ownRule = $row;
+                    } else {
+                        Log::add('Redirect for article ' . $id . ' not stored: a 4SEO rule not created by the plugin already exists for ' . $old, Log::INFO, 'autoarchive');
+
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                // No double jump: whatever rule pointed to the old address now points to the new one.
+                if ((int) $row->enabled !== 0 && $this->samePath((string) ($spec['actionRedirectTarget'] ?? ''), $old)) {
+                    $spec['actionRedirectTarget'] = $new;
+
+                    if (!$own) {
+                        $spec['notes'] = trim((string) ($spec['notes'] ?? '') . ' [' . self::REDIRECT_MARKER . ' target changed from ' . $old . ' after the move of article ' . $id . ']');
+                    }
+
+                    $this->saveForseoRule((int) $row->id, $spec, (int) $row->enabled);
+                    Log::add('4SEO rule ' . $row->id . ' now points to ' . $new . ' instead of ' . $old, Log::INFO, 'autoarchive');
+                    $stored = true;
+                }
+            }
+
+            if ($ownRule) {
+                $spec                         = json_decode((string) $ownRule->rule, true);
+                $spec['enabled']              = 2;
+                $spec['actionRedirectType']   = 301;
+                $spec['actionRedirectTarget'] = $new;
+                $spec['notes']                = $note;
+                $this->saveForseoRule((int) $ownRule->id, $spec, 2);
+                Log::add('4SEO rule 301 ' . $old . ' -> ' . $new . ' updated (article ' . $id . ')', Log::INFO, 'autoarchive');
+
+                return true;
+            }
+
+            $spec = [
+                'type'                 => 10,
+                'title'                => $this->forseoTitle($old),
+                'enabled'              => 2,
+                'notes'                => $note,
+                'urlSpec'              => $old,
+                'urlNegSpec'           => '',
+                'disregardQuery'       => true,
+                'disregardCase'        => true,
+                'actionRedirectType'   => 301,
+                'actionRedirectTarget' => $new,
+                'actionReappendQuery'  => false,
+            ];
+            $max     = (int) $db->setQuery(
+                self::query($db)->select('MAX(' . $db->quoteName('ordering') . ')')->from($db->quoteName('#__forseo_rules'))->where($db->quoteName('type') . ' = 10')
+            )->loadResult();
+            $columns = ['type', 'source', 'title', 'rule', 'hits', 'enabled', 'valid', 'ordering'];
+            $title   = $spec['title'];
+            $json    = json_encode($spec, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            $ten     = 10;
+            $zero    = 0;
+            $enabled = 2;
+            $valid   = 1;
+            $order   = $max + 1;
+            $query   = self::query($db)
+                ->insert($db->quoteName('#__forseo_rules'))
+                ->columns($db->quoteName($columns))
+                ->values(':type, :source, :title, :rule, :hits, :enabled, :valid, :ordering')
+                ->bind(':type', $ten, ParameterType::INTEGER)
+                ->bind(':source', $zero, ParameterType::INTEGER)
+                ->bind(':title', $title)
+                ->bind(':rule', $json)
+                ->bind(':hits', $zero, ParameterType::INTEGER)
+                ->bind(':enabled', $enabled, ParameterType::INTEGER)
+                ->bind(':valid', $valid, ParameterType::INTEGER)
+                ->bind(':ordering', $order, ParameterType::INTEGER);
+            $db->setQuery($query)->execute();
+            Log::add('4SEO rule 301 ' . $old . ' -> ' . $new . ' (article ' . $id . ')', Log::INFO, 'autoarchive');
+
+            return true;
+        } catch (\Throwable $e) {
+            Log::add('4SEO rule for article ' . $id . ' not stored: ' . $e->getMessage(), Log::WARNING, 'autoarchive');
+
+            // 4SEO did not take it: the Joomla Redirects component does.
+            return null;
+        }
+    }
+
+    /**
+     * Writes the JSON specification and the enabled flag of an existing 4SEO rule.
+     *
+     * @param   int    $ruleId   The rule id.
+     * @param   array  $spec     The decoded specification.
+     * @param   int    $enabled  The value of the column "enabled" (0 off, 1 everywhere, 2 with conditions).
+     *
+     * @return  void
+     *
+     * @since   1.1.0
+     */
+    private function saveForseoRule(int $ruleId, array $spec, int $enabled): void
+    {
+        $db   = Factory::getContainer()->get(DatabaseInterface::class);
+        $json = json_encode($spec, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $db->setQuery(
+            self::query($db)
+                ->update($db->quoteName('#__forseo_rules'))
+                ->set($db->quoteName('rule') . ' = :rule')
+                ->set($db->quoteName('enabled') . ' = :enabled')
+                ->where($db->quoteName('id') . ' = :id')
+                ->bind(':rule', $json)
+                ->bind(':enabled', $enabled, ParameterType::INTEGER)
+                ->bind(':id', $ruleId, ParameterType::INTEGER)
+        )->execute();
+    }
+
+    /**
+     * Title of a 4SEO rule (the column holds at most 190 characters).
+     *
+     * @param   string  $old  The old path.
+     *
+     * @return  string
+     *
+     * @since   1.1.0
+     */
+    private function forseoTitle(string $old): string
+    {
+        return mb_substr(self::REDIRECT_MARKER . ' ' . $old, 0, 190);
+    }
+
+    /**
+     * Stores a 301 redirect from the old to the new URL of a moved article in the Joomla
+     * Redirect component (used by the "System - Redirect" plugin on 404 pages). An
+     * existing redirect for the same old URL is updated; a redirect that starts from the
+     * new URL, now a live page again, is unpublished.
+     *
+     * @param   int     $id      The article id.
+     * @param   string  $oldUrl  The URL before the move.
+     * @param   string  $newUrl  The URL after the move.
+     *
+     * @return  bool  True when a redirect has been stored.
+     *
+     * @since   1.0.0
+     */
+    private function addJoomlaRedirect(int $id, string $oldUrl, string $newUrl): bool
+    {
+        if ($newUrl === '' || $newUrl === $oldUrl) {
+            return false;
+        }
+
         try {
             $db     = Factory::getContainer()->get(DatabaseInterface::class);
             $marker = self::REDIRECT_MARKER . '%';
             $legacy = self::LEGACY_REDIRECT_MARKER . '%';
-            $query  = $db->createQuery()
+            $query  = self::query($db)
                 ->update($db->quoteName('#__redirect_links'))
                 ->set($db->quoteName('published') . ' = 0')
                 ->where($db->quoteName('old_url') . ' = :new')
@@ -647,7 +1075,7 @@ final class Automation
     {
         $db     = Factory::getContainer()->get(DatabaseInterface::class);
         $target = $this->getTarget();
-        $query  = $db->createQuery()
+        $query  = self::query($db)
             ->select($db->quoteName('id'))
             ->from($db->quoteName('#__content'))
             ->whereIn($db->quoteName('id'), $pks)
@@ -667,7 +1095,7 @@ final class Automation
     private function getLanguage(int $id): string
     {
         $db    = Factory::getContainer()->get(DatabaseInterface::class);
-        $query = $db->createQuery()
+        $query = self::query($db)
             ->select($db->quoteName('language'))
             ->from($db->quoteName('#__content'))
             ->where($db->quoteName('id') . ' = :id')
@@ -726,7 +1154,7 @@ final class Automation
         }
 
         $db    = Factory::getContainer()->get(DatabaseInterface::class);
-        $query = $db->createQuery()
+        $query = self::query($db)
             ->select($db->quoteName('published'))
             ->from($db->quoteName('#__categories'))
             ->where($db->quoteName('id') . ' = :id')

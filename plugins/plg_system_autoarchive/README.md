@@ -3,7 +3,7 @@
 Joomla system plugin by WebG. It keeps the **archived articles of a site in one category**:
 archiving an article moves it to the category you choose, and a published article saved or moved
 (also with Batch) into that category is archived through the Joomla article model, so Smart
-Search, cache, versions and action logs stay in sync. Optional 301 redirects from the old address.
+Search, cache, versions and action logs stay in sync. Optional 301 redirects from the old address, stored in 4SEO (as redirect rules) or in the Joomla Redirects component.
 Plain Joomla: works with or without YOOtheme.
 
 - Joomla 5.x and 6.x, PHP 8.1 or later.
@@ -11,7 +11,7 @@ Plain Joomla: works with or without YOOtheme.
   category if you keep that option on); never acts for guests or the command line.
 - License: GNU GPL version 2 or later (see `LICENSE.txt`).
 
-User guide: https://github.com/WebG-it/joomla-extensions/blob/main/docs/autoarchive/USAGE.md
+User guide: https://github.com/WebG-it/auto-archive/blob/main/docs/autoarchive/USAGE.md
 (Italian: `docs/autoarchive/USO.md`).
 
 ## Options
@@ -34,4 +34,4 @@ and the log stays in `administrator/logs/`.
 
 ## Development
 
-Source, build script and Docker test environment: https://github.com/WebG-it/joomla-extensions
+Source, build script and Docker test environment: https://github.com/WebG-it/auto-archive

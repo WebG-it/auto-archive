@@ -63,6 +63,7 @@ Vieni da Layout archivio per YOOtheme 1.x? Vedi [Passare da Layout archivio 1.x]
 | Richiedi il permesso di creare | Acceso di serie: sposta solo se chi archivia può anche creare articoli nella categoria archivio. |
 | Sposta gli articoli archiviati | Archivia (da elenco, barra, modifica o API) = sposta nella categoria. |
 | Redirect 301 dal vecchio indirizzo | Acceso di serie. Se la categoria fa parte dell'URL dell'articolo, entrare nella categoria archivio cambia l'indirizzo: il vecchio viene reindirizzato (301) al nuovo tramite il componente *Reindirizzamenti* di Joomla, sia per gli spostamenti fatti dal plugin sia per gli articoli che un utente sposta nella categoria. Serve il plugin *Sistema - Reindirizzamento* attivo (se è spento gli amministratori vedono un avviso). Se l'indirizzo non cambia non viene salvato nulla. |
+| Salva i redirect in | *Automatico* (predefinito): in 4SEO come regola di redirect se 4SEO è installato, attivo e con i redirect accesi, altrimenti nel componente *Reindirizzamenti* di Joomla. *Reindirizzamenti di Joomla* o *Regole di redirect di 4SEO* forzano una delle due (4SEO scelto ma non utilizzabile: si usa Joomla e il motivo va nel log). Dalla 1.1.0. |
 | Archivia gli articoli spostati nella categoria | Un articolo pubblicato salvato o spostato (anche con *Elaborazione in serie*) nella categoria viene archiviato. |
 | Forza archiviato | Spento di serie: puoi ripubblicare apposta un articolo che sta già nella categoria. Acceso: viene riarchiviato sempre. |
 
@@ -109,13 +110,24 @@ plugin non c'è più: è questo plugin.
 
 ## Note per chi usa 4SEO
 
-4SEO non crea un redirect quando un articolo cambia indirizzo. Se la categoria fa parte degli URL
-degli articoli tieni accesa l'opzione *Redirect 301 dal vecchio indirizzo* (con il plugin *Sistema -
-Reindirizzamento* di Joomla attivo). Dopo aver archiviato molti articoli insieme rifai l'analisi del
-sito in 4SEO (*Pagine > Reset analisi*), così sitemap e canonical usano i nuovi indirizzi. Con URL
-degli articoli che contengono l'id (`/<id>-alias`) Joomla trova l'articolo dall'id qualunque sia la
-categoria nell'indirizzo: dopo lo spostamento il vecchio URL resta vivo (niente 404) e il redirect
-non serve.
+Dalla 1.1.0, se 4SEO è installato e i suoi redirect sono accesi, il redirect 301 di uno spostamento viene
+salvato come **regola di redirect di 4SEO** (*Redirect > Regole*, nota che inizia con "Auto Archive:") e
+servito da 4SEO; per questo non serve il plugin *Sistema - Reindirizzamento* di Joomla. Dove viene salvato
+si sceglie con l'opzione *Salva i redirect in* (Automatico: 4SEO se disponibile, altrimenti Joomla). Nel
+dettaglio:
+
+- Se una regola di redirect punta già al vecchio indirizzo (uno spostamento precedente, o una fatta a
+  mano), viene puntata al nuovo indirizzo: i visitatori non fanno mai due salti. La regola fatta a mano
+  mantiene il suo tipo e riceve una nota che dice cosa è cambiato.
+- Una regola di questo plugin che parte dall'indirizzo che l'articolo ha adesso (di nuovo una pagina viva)
+  viene spenta.
+- Una regola per il vecchio indirizzo che il plugin non ha creato non viene mai modificata.
+- Un indirizzo che 4SEO non può tenere come regola semplice (contiene `{*}` o `{?}`) va nei Reindirizzamenti di Joomla.
+
+Dopo aver archiviato molti articoli insieme rifai l'analisi del sito in 4SEO (*Pagine > Reset analisi*),
+così sitemap e canonical usano i nuovi indirizzi. Con URL degli articoli che contengono l'id
+(`/<id>-alias`) Joomla trova l'articolo dall'id qualunque sia la categoria nell'indirizzo: dopo lo
+spostamento il vecchio URL resta vivo (niente 404) e il redirect non serve.
 
 ## 3. Aggiornare
 

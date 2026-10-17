@@ -112,6 +112,7 @@ final class Autoarchive extends CMSPlugin implements SubscriberInterface
             \in_array($option, ['com_plugins', 'com_redirect'], true)
             && ($this->params->get('move_on_archive', 1) || $this->params->get('archive_on_move', 1))
             && $this->params->get('redirect_on_move', 1) && !PluginHelper::isEnabled('system', 'redirect')
+            && Automation::resolveRedirectBackend($this->params) === 'joomla'
         ) {
             $app->enqueueMessage(Text::_('PLG_SYSTEM_AUTOARCHIVE_MSG_REDIRECT_PLUGIN_OFF'), 'warning');
         }

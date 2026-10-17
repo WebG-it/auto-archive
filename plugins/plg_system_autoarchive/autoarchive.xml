@@ -8,11 +8,11 @@
     <licence>GNU GPL version 2 or later (GPL-2.0-or-later); see LICENSE.txt</licence>
     <authorEmail>marco.galassi@webg.it</authorEmail>
     <authorUrl>https://www.webg.it</authorUrl>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <description>PLG_SYSTEM_AUTOARCHIVE_XML_DESCRIPTION</description>
     <namespace path="src">WebG\Plugin\System\Autoarchive</namespace>
     <scriptfile>script.php</scriptfile>
-    <changelogurl>https://raw.githubusercontent.com/WebG-it/joomla-extensions/main/changelogs/autoarchive.xml</changelogurl>
+    <changelogurl>https://raw.githubusercontent.com/WebG-it/auto-archive/main/changelogs/autoarchive.xml</changelogurl>
 
     <files>
         <folder plugin="autoarchive">services</folder>
@@ -94,6 +94,19 @@
                     <option value="1">JYES</option>
                 </field>
                 <field
+                    name="redirect_target"
+                    type="list"
+                    label="PLG_SYSTEM_AUTOARCHIVE_FIELD_REDIRECT_TARGET_LABEL"
+                    description="PLG_SYSTEM_AUTOARCHIVE_FIELD_REDIRECT_TARGET_DESC"
+                    default="auto"
+                    validate="options"
+                    showon="automation:1[AND]redirect_on_move:1"
+                >
+                    <option value="auto">PLG_SYSTEM_AUTOARCHIVE_REDIRECT_TARGET_AUTO</option>
+                    <option value="joomla">PLG_SYSTEM_AUTOARCHIVE_REDIRECT_TARGET_JOOMLA</option>
+                    <option value="forseo">PLG_SYSTEM_AUTOARCHIVE_REDIRECT_TARGET_FORSEO</option>
+                </field>
+                <field
                     name="archive_on_move"
                     type="radio"
                     label="PLG_SYSTEM_AUTOARCHIVE_FIELD_ARCHIVE_ON_MOVE_LABEL"
@@ -124,6 +137,6 @@
     </config>
 
     <updateservers>
-        <server type="collection" name="WebG Joomla Extensions">https://raw.githubusercontent.com/WebG-it/joomla-extensions/main/collection.xml</server>
+        <server type="collection" name="Auto Archive">https://raw.githubusercontent.com/WebG-it/auto-archive/main/collection.xml</server>
     </updateservers>
 </extension>

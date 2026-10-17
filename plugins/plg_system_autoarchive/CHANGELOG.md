@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.0 (2026-10-17)
+
+Redirects in 4SEO.
+
+- Redirects can now be stored as 4SEO redirect rules. New option "Store the redirects in": Automatic (default) uses 4SEO when it is installed, enabled and its redirects are on, otherwise the Joomla Redirects component as before; or force one of the two.
+- No double jumps in 4SEO: a redirect rule that already points to the old address of a moved article (an earlier move, or one made by hand) is pointed to the new address; a rule of this plugin that starts from the new address, now a live page again, is switched off; a rule for the old address that the plugin did not create is never changed.
+- The update server now lives in the repository of the plugin (github.com/WebG-it/auto-archive). Nothing else changes for people who do not use 4SEO.
+- Works on Joomla 5.0 and 5.1 too (the queries no longer need the createQuery method of Joomla 5.2).
+
 ## 1.0.1 (2026-10-17)
 
 Description and guides: why it exists. No change in behaviour.
