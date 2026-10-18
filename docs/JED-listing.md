@@ -21,7 +21,7 @@ Description must be in English.
 | uses_updater | yes (collection update server) |
 | Extension includes | Plugin |
 | Logo (16:7) | `assets/autoarchive-jed-logo.png` (1200x525) |
-| Screenshots | none yet (plugin options screen would help; to be taken on a test site) |
+| Screenshots | `docs/autoarchive/images/options-en.jpg` (options, English), `docs/autoarchive/images/options-it.jpg` (options, Italian: the Joomla core interface stays in English on that test site because only the plugin ships the Italian strings). Taken on a throwaway Joomla 6.2 test site with fake categories, no real data |
 
 ## Description
 
